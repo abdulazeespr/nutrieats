@@ -13,7 +13,7 @@ import {
   getMenuItem,
   listDeals,
 } from "../controllers/restaurantController";
-import { createOrder, getOrder, getMyOrders } from "../controllers/orderController";
+import { createOrder, getOrder, getMyOrders, updateOrderStatus } from "../controllers/orderController";
 import {
   getDashboard,
   createMenuItem,
@@ -53,6 +53,7 @@ router.get("/deals", listDeals);
 router.post("/orders", authenticate, requireRole("CUSTOMER"), createOrder);
 router.get("/orders/my", authenticate, requireRole("CUSTOMER"), getMyOrders);
 router.get("/orders/:id", authenticate, getOrder);
+router.patch("/orders/:id/status", authenticate, updateOrderStatus);
 
 // Merchant
 router.get(

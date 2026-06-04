@@ -134,3 +134,42 @@ export async function getMyOrders(req: AuthRequest, res: Response) {
 
   res.json(orders);
 }
+
+export async function updateOrderStatus(req: AuthRequest, res: Response) {
+  const schema = z.object({
+    status: z.enum(["CONFIRMED", "PREPARING", "CANCELLED"]),
+  });
+
+  const parse = schema.safeParse(req.body);
+  if (!parse.success) {
+    res.status(400).json({ error: parse.error.flatten() });
+    return;
+  }
+
+  const order = await prisma.order.findUnique({ where: { id: req.params.id } });
+  if (!order) {
+    res.status(404).json({ error: "Order not found" });
+    return;
+  }
+
+  // Allow: customer cancelling their own PLACED order, or merchant updating their restaurant's order
+  const isCustomerCancelling =
+    req.userRole === "CUSTOMER" &&
+    order.customerId === req.userId &&
+    parse.data.status === "CANCELLED" &&
+    order.status === "PLACED";
+
+  const isMerchant = req.userRole === "MERCHANT";
+
+  if (!isCustomerCancelling && !isMerchant) {
+    res.status(403).json({ error: "Forbidden" });
+    return;
+  }
+
+  const updated = await prisma.order.update({
+    where: { id: req.params.id },
+    data: { status: parse.data.status },
+  });
+
+  res.json(updated);
+}
