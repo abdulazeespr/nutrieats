@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
+import { useCart } from "@/context/CartContext";
 import { api } from "@/lib/api";
 import Badge from "@/components/ui/Badge";
 import Button from "@/components/ui/Button";
@@ -13,6 +14,7 @@ import IngredientsList, { Ingredient } from "@/components/item/IngredientsList";
 
 interface MenuItemDetail {
   id: string;
+  restaurantId: string;
   name: string;
   description: string;
   price: number;
@@ -56,12 +58,14 @@ interface DailyLogResponse {
 export default function MenuItemDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { user, logout } = useAuth();
+  const { addItem, items: cartItems, totalItems } = useCart();
   const router = useRouter();
 
   const [item, setItem] = useState<MenuItemDetail | null>(null);
   const [rda, setRda] = useState<RdaTargets | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [added, setAdded] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -92,6 +96,26 @@ export default function MenuItemDetailPage() {
     logout();
     router.push("/");
   }
+
+  function handleAddToCart() {
+    if (!item) return;
+    addItem({
+      menuItemId: item.id,
+      name: item.name,
+      price: item.price,
+      discountedPrice: discountedPrice ?? item.price,
+      calories: item.calories,
+      imageUrl: item.imageUrl,
+      restaurantId: item.restaurantId,
+      restaurantName: item.restaurant.name,
+    });
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1500);
+  }
+
+  const cartQty = item
+    ? (cartItems.find((c) => c.menuItemId === item.id)?.quantity ?? 0)
+    : 0;
 
   const discountedPrice =
     item && item.discount > 0 ? item.price * (1 - item.discount / 100) : null;
@@ -321,9 +345,35 @@ export default function MenuItemDetailPage() {
             {/* Add to Cart CTA */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
               {user ? (
-                <p className="text-sm text-gray-500 text-center">
-                  Cart & checkout coming in Phase 3.
-                </p>
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900">
+                      {discountedPrice != null
+                        ? `₹${discountedPrice.toFixed(0)}`
+                        : `₹${item.price.toFixed(0)}`}
+                    </p>
+                    {cartQty > 0 && (
+                      <p className="text-xs text-green-600 mt-0.5">
+                        {cartQty} in cart
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {totalItems > 0 && (
+                      <Link href="/cart">
+                        <Button variant="secondary" className="text-sm px-4 py-2">
+                          View cart ({totalItems})
+                        </Button>
+                      </Link>
+                    )}
+                    <Button
+                      onClick={handleAddToCart}
+                      className="text-sm px-6 py-2"
+                    >
+                      {added ? "Added ✓" : cartQty > 0 ? "Add another" : "Add to cart"}
+                    </Button>
+                  </div>
+                </div>
               ) : (
                 <div className="text-center">
                   <p className="text-sm text-gray-500 mb-4">

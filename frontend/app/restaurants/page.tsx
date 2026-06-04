@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { useCart } from "@/context/CartContext";
 import { api } from "@/lib/api";
 import RestaurantCard, {
   RestaurantSummary,
@@ -19,6 +20,7 @@ interface UserProfile {
 
 function RestaurantListContent() {
   const { user, logout } = useAuth();
+  const { totalItems } = useCart();
   const router = useRouter();
 
   const [restaurants, setRestaurants] = useState<RestaurantSummary[]>([]);
@@ -102,6 +104,16 @@ function RestaurantListContent() {
             NutriEats
           </Link>
           <div className="flex items-center gap-3">
+            {user && totalItems > 0 && (
+              <Link href="/cart">
+                <button className="relative flex items-center gap-1 px-3 py-2 rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-700 hover:border-gray-300 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500">
+                  🛒
+                  <span className="absolute -top-1.5 -right-1.5 min-w-[1.1rem] h-[1.1rem] rounded-full bg-green-600 text-white text-xs font-bold flex items-center justify-center px-0.5">
+                    {totalItems}
+                  </span>
+                </button>
+              </Link>
+            )}
             {user ? (
               <>
                 <span className="text-sm text-gray-500 hidden sm:block">
