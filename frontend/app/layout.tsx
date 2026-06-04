@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
+import ErrorBoundary from "@/components/ui/ErrorBoundary";
 
 export const metadata: Metadata = {
   title: "NutriEats — Eat what you love. Know what you eat.",
@@ -18,7 +19,9 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <AuthProvider>
-          <CartProvider>{children}</CartProvider>
+          <CartProvider>
+            <ErrorBoundary>{children}</ErrorBoundary>
+          </CartProvider>
         </AuthProvider>
       </body>
     </html>

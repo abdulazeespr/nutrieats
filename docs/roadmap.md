@@ -200,11 +200,11 @@
 
 ## Phase 8 — Polish, Seed Data & Smoke Test
 
-- [ ] Seed script: 3 restaurants, 30 menu items (mix of healthy/indulgent), 5 customers with body stats and allergies, 3 riders, 2 merchants, sample orders and daily logs
-- [ ] Loading skeletons for all listing pages
-- [ ] Error boundary + generic error page
-- [ ] Empty state illustrations (no results, empty cart, no orders yet)
-- [ ] Mobile-responsive audit (all pages)
+- [x] Seed script: 3 restaurants, 30 menu items (mix of healthy/indulgent), 5 customers with body stats and allergies, 3 riders, 2 merchants, sample orders and daily logs
+- [x] Loading skeletons for all listing pages
+- [x] Error boundary + generic error page
+- [x] Empty state illustrations (no results, empty cart, no orders yet)
+- [x] Mobile-responsive audit (all pages)
 - [ ] End-to-end smoke test: Register → Onboard → Browse → Order → Track → Rider fulfils
 
 ---
