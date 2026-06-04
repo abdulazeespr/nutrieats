@@ -137,16 +137,16 @@
 ## Phase 5 — Rider App
 
 ### Backend
-- [ ] Rider auth (role check)
-- [ ] `GET /api/rider/assignments/pending` — orders ready for pickup in the rider's area
-- [ ] `POST /api/rider/assignments/:orderId/accept` — assign order to rider
-- [ ] `PATCH /api/rider/assignments/:id/status` — Picked Up / On the Way / Delivered
-- [ ] `GET /api/rider/assignments/active` — current active delivery
+- [x] Rider auth (role check)
+- [x] `GET /api/rider/assignments/pending` — orders ready for pickup in the rider's area
+- [x] `POST /api/rider/assignments/:orderId/accept` — assign order to rider
+- [x] `PATCH /api/rider/assignments/:id/status` — Picked Up / On the Way / Delivered
+- [x] `GET /api/rider/assignments/active` — current active delivery
 
 ### Frontend (`/rider` route group)
-- [ ] `/rider/login`
-- [ ] `/rider/dashboard` — pending assignments list
-- [ ] `/rider/delivery/[id]` — active delivery screen
+- [x] `/rider/login`
+- [x] `/rider/dashboard` — pending assignments list
+- [x] `/rider/delivery/[id]` — active delivery screen
   - Order summary (restaurant → customer address)
   - Items list
   - Status update buttons
