@@ -6,6 +6,8 @@ import {
   upsertAllergies,
   updateNotifPrefs,
   getDailyLog,
+  getRda,
+  updateRda,
 } from "../controllers/userController";
 import {
   listRestaurants,
@@ -43,6 +45,8 @@ router.put("/users/body-stats", authenticate, upsertBodyStats);
 router.put("/users/allergies", authenticate, upsertAllergies);
 router.put("/users/notifications", authenticate, updateNotifPrefs);
 router.get("/users/daily-log", authenticate, getDailyLog);
+router.get("/users/rda", authenticate, getRda);
+router.put("/users/rda", authenticate, updateRda);
 
 // Restaurants & menu (public browse, optional auth for allergy matching)
 router.get("/restaurants", listRestaurants);

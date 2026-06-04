@@ -157,22 +157,22 @@
 ## Phase 6 — Health Engine
 
 ### Backend
-- [ ] BMR calculation utility (Mifflin-St Jeor)
-- [ ] RDA defaults derived from BMR (protein = 0.8g × weight, carbs = 50% calories, fat = 30% calories, fiber = 25g)
-- [ ] `GET /api/users/daily-log` — return today's consumed nutrients vs RDA
-- [ ] `GET /api/users/rda` — return current RDA targets
-- [ ] `PUT /api/users/rda` — override individual nutrient targets
-- [ ] Low-nutrient alert logic: compare daily log to targets, return list of deficient nutrients
+- [x] BMR calculation utility (Mifflin-St Jeor)
+- [x] RDA defaults derived from BMR (protein = 0.8g × weight, carbs = 50% calories, fat = 30% calories, fiber = 25g)
+- [x] `GET /api/users/daily-log` — return today's consumed nutrients vs RDA
+- [x] `GET /api/users/rda` — return current RDA targets
+- [x] `PUT /api/users/rda` — override individual nutrient targets
+- [x] Low-nutrient alert logic: compare daily log to targets, return list of deficient nutrients
 
 ### Frontend
-- [ ] `/profile/health` — Nutrient Status Dashboard
+- [x] `/profile/health` — Nutrient Status Dashboard
   - BMR and RDA summary cards
   - Per-nutrient progress bars with color coding (green = on track, orange = low, red = critical)
   - Smart meal suggestions when a nutrient is low (e.g. "Add a protein-rich item")
-- [ ] `/profile/settings` — Body Stats editor (re-calculates BMR on save)
-- [ ] `/profile/rda` — manual RDA override sliders
-- [ ] `/profile/allergies` — allergy manager
-- [ ] `/profile/notifications` — per-nutrient notification toggles
+- [x] `/profile/settings` — Body Stats editor (re-calculates BMR on save)
+- [x] `/profile/rda` — manual RDA override sliders
+- [x] `/profile/allergies` — allergy manager
+- [x] `/profile/notifications` — per-nutrient notification toggles
 
 ---
 

@@ -120,6 +120,70 @@ export async function updateNotifPrefs(req: AuthRequest, res: Response) {
   res.json(prefs);
 }
 
+export async function getRda(req: AuthRequest, res: Response) {
+  const bodyStats = await prisma.bodyStats.findUnique({
+    where: { userId: req.userId! },
+    select: {
+      bmr: true,
+      rdaCalories: true,
+      rdaProtein: true,
+      rdaCarbs: true,
+      rdaFat: true,
+      rdaFiber: true,
+    },
+  });
+
+  if (!bodyStats) {
+    res.status(404).json({ error: "Body stats not set up yet" });
+    return;
+  }
+
+  res.json(bodyStats);
+}
+
+const rdaOverrideSchema = z.object({
+  rdaCalories: z.number().positive().optional(),
+  rdaProtein: z.number().positive().optional(),
+  rdaCarbs: z.number().positive().optional(),
+  rdaFat: z.number().positive().optional(),
+  rdaFiber: z.number().positive().optional(),
+});
+
+export async function updateRda(req: AuthRequest, res: Response) {
+  const parse = rdaOverrideSchema.safeParse(req.body);
+  if (!parse.success) {
+    res.status(400).json({ error: parse.error.flatten() });
+    return;
+  }
+
+  if (Object.keys(parse.data).length === 0) {
+    res.status(400).json({ error: "No fields provided" });
+    return;
+  }
+
+  const existing = await prisma.bodyStats.findUnique({
+    where: { userId: req.userId! },
+  });
+  if (!existing) {
+    res.status(404).json({ error: "Body stats not set up yet" });
+    return;
+  }
+
+  const updated = await prisma.bodyStats.update({
+    where: { userId: req.userId! },
+    data: parse.data,
+  });
+
+  res.json({
+    bmr: updated.bmr,
+    rdaCalories: updated.rdaCalories,
+    rdaProtein: updated.rdaProtein,
+    rdaCarbs: updated.rdaCarbs,
+    rdaFat: updated.rdaFat,
+    rdaFiber: updated.rdaFiber,
+  });
+}
+
 export async function getDailyLog(req: AuthRequest, res: Response) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
