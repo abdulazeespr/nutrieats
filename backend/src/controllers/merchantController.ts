@@ -148,6 +148,22 @@ export async function toggleItemAvailability(req: AuthRequest, res: Response) {
   res.json(updated);
 }
 
+export async function getRestaurant(req: AuthRequest, res: Response) {
+  const restaurant = await prisma.restaurant.findUnique({
+    where: { ownerId: req.userId! },
+    include: {
+      menuItems: {
+        orderBy: { createdAt: "desc" },
+      },
+    },
+  });
+  if (!restaurant) {
+    res.status(404).json({ error: "Restaurant not found" });
+    return;
+  }
+  res.json(restaurant);
+}
+
 export async function upsertRestaurant(req: AuthRequest, res: Response) {
   const schema = z.object({
     name: z.string().min(1),

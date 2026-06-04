@@ -16,6 +16,7 @@ import {
 import { createOrder, getOrder, getMyOrders, updateOrderStatus } from "../controllers/orderController";
 import {
   getDashboard,
+  getRestaurant as getMerchantRestaurant,
   createMenuItem,
   updateMenuItem,
   toggleItemAvailability,
@@ -61,6 +62,12 @@ router.get(
   authenticate,
   requireRole("MERCHANT"),
   getDashboard
+);
+router.get(
+  "/merchant/restaurant",
+  authenticate,
+  requireRole("MERCHANT"),
+  getMerchantRestaurant
 );
 router.put(
   "/merchant/restaurant",
