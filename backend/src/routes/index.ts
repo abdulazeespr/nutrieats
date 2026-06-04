@@ -15,6 +15,7 @@ import {
   getMenuItem,
   listDeals,
 } from "../controllers/restaurantController";
+import { getFlashOffers } from "../controllers/flashOffersController";
 import { createOrder, getOrder, getMyOrders, updateOrderStatus } from "../controllers/orderController";
 import {
   getDashboard,
@@ -53,6 +54,7 @@ router.get("/restaurants", listRestaurants);
 router.get("/restaurants/:id", getRestaurant);
 router.get("/menu-items/:id", authenticate, getMenuItem);
 router.get("/deals", listDeals);
+router.get("/offers/flash", getFlashOffers);
 
 // Orders (customer)
 router.post("/orders", authenticate, requireRole("CUSTOMER"), createOrder);

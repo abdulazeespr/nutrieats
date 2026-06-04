@@ -179,10 +179,16 @@
 ## Phase 7 — Home Screen & Deals
 
 ### Backend
-- [ ] `GET /api/deals` — items and restaurants with active discounts, sorted by deal value
-- [ ] `GET /api/offers/flash` — time-limited flash deals
+- [x] `GET /api/deals` — items and restaurants with active discounts, sorted by deal value
+- [x] `GET /api/offers/flash` — time-limited flash deals
 
 ### Frontend
+- [x] Full home page `/`
+  - RDA Hazard Box (top): lists today's deficient nutrients with dismiss buttons
+  - Best Deals section (70%): deal cards with discount %, item photo, health badge, restaurant name
+  - Flash Offers strip (10%): horizontal scroll, countdown timers
+  - Category Quick Filters: Healthy / Indulgent / All
+- [x] Deal card component with health/indulgent badge
 - [ ] Full home page `/`
   - RDA Hazard Box (top): lists today's deficient nutrients with dismiss buttons
   - Best Deals section (70%): deal cards with discount %, item photo, health badge, restaurant name

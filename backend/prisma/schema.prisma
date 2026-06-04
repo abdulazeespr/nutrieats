@@ -133,11 +133,12 @@ model MenuItem {
   cookingMethod String   @default("")
   ingredients   Json     @default("[]")
   allergens     String[] @default([])
-  healthScore   Float    @default(5.0)
-  isHealthy     Boolean  @default(false)
-  isAvailable   Boolean  @default(true)
-  discount      Float    @default(0)
-  createdAt     DateTime @default(now())
+  healthScore     Float     @default(5.0)
+  isHealthy       Boolean   @default(false)
+  isAvailable     Boolean   @default(true)
+  discount        Float     @default(0)
+  flashDealUntil  DateTime?
+  createdAt       DateTime  @default(now())
 
   restaurant  Restaurant  @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
   orderItems  OrderItem[]

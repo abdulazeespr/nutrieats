@@ -86,6 +86,7 @@ async function main() {
     name: string; description: string; price: number; imageUrl: string;
     calories: number; protein: number; carbs: number; fat: number; fiber: number;
     cookingMethod: string; ingredients: object[]; allergens: string[]; discount: number;
+    flashDealUntil?: Date | null;
   };
 
   const greenLeafItems: ItemDef[] = [
@@ -281,11 +282,15 @@ async function main() {
   ];
 
   async function seedItems(restaurantId: string, items: ItemDef[]) {
+    // Flash deal items: top-discounted items (≥ 20%) get a flash window of 6 hours from seed time
+    const flashUntil = new Date(Date.now() + 6 * 60 * 60 * 1000);
+
     for (const item of items) {
       const healthScore = calculateHealthScore(item);
+      const isFlash = item.discount >= 20;
       await prisma.menuItem.upsert({
         where: { id: `seed-${restaurantId}-${item.name.replace(/\s+/g, "-").toLowerCase()}` },
-        update: {},
+        update: { flashDealUntil: isFlash ? flashUntil : null },
         create: {
           id: `seed-${restaurantId}-${item.name.replace(/\s+/g, "-").toLowerCase()}`,
           restaurantId,
@@ -293,6 +298,7 @@ async function main() {
           ingredients: item.ingredients,
           healthScore,
           isHealthy: isHealthy(healthScore),
+          flashDealUntil: isFlash ? flashUntil : null,
         },
       });
     }
