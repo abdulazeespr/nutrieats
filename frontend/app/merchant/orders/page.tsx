@@ -25,6 +25,17 @@ interface Order {
   items: OrderItem[];
 }
 
+const MERCHANT_ACTIONS: Record<string, { label: string; targetStatus: string }[]> = {
+  PLACED: [
+    { label: "Confirm Order", targetStatus: "CONFIRMED" },
+    { label: "Cancel Order", targetStatus: "CANCELLED" },
+  ],
+  CONFIRMED: [
+    { label: "Start Preparing", targetStatus: "PREPARING" },
+    { label: "Cancel Order", targetStatus: "CANCELLED" },
+  ],
+};
+
 const STATUS_COLOR: Record<string, "green" | "orange" | "gray" | "blue" | "red"> = {
   PLACED: "blue",
   CONFIRMED: "blue",
@@ -51,6 +62,8 @@ function OrdersContent() {
   const [error, setError] = useState("");
   const [filter, setFilter] = useState<FilterStatus>("ALL");
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [updating, setUpdating] = useState<Record<string, string | null>>({});
+  const [orderErrors, setOrderErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     api
@@ -61,6 +74,26 @@ function OrdersContent() {
   }, []);
 
   const displayed = filter === "ALL" ? orders : orders.filter((o) => o.status === filter);
+
+  async function handleStatusUpdate(orderId: string, targetStatus: string) {
+    setUpdating((prev) => ({ ...prev, [orderId]: targetStatus }));
+    setOrderErrors((prev) => {
+      const next = { ...prev };
+      delete next[orderId];
+      return next;
+    });
+    try {
+      const updated = await api.patch<{ status: string }>(`/orders/${orderId}/status`, { status: targetStatus });
+      setOrders((prev) =>
+        prev.map((o) => (o.id === orderId ? { ...o, status: updated.status } : o))
+      );
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to update order status.";
+      setOrderErrors((prev) => ({ ...prev, [orderId]: message }));
+    } finally {
+      setUpdating((prev) => ({ ...prev, [orderId]: null }));
+    }
+  }
 
   const FILTERS: { value: FilterStatus; label: string }[] = [
     { value: "ALL", label: "All" },
@@ -210,6 +243,40 @@ function OrdersContent() {
                         </div>
                         <p className="text-xs text-gray-400 mt-1 text-right">{Math.round(order.totalCalories)} kcal total</p>
                       </div>
+
+                      {/* Merchant action buttons */}
+                      {(() => {
+                        const actions = MERCHANT_ACTIONS[order.status];
+                        if (!actions || actions.length === 0) return null;
+                        const isUpdating = !!updating[order.id];
+                        return (
+                          <div className="mt-4 pt-4 border-t border-gray-200">
+                            {orderErrors[order.id] && (
+                              <p role="alert" className="text-sm text-red-600 mb-3">
+                                {orderErrors[order.id]}
+                              </p>
+                            )}
+                            <div className="flex gap-2 flex-wrap">
+                              {actions.map((action) => (
+                                <button
+                                  key={action.targetStatus}
+                                  onClick={() => handleStatusUpdate(order.id, action.targetStatus)}
+                                  disabled={isUpdating}
+                                  className={`px-4 py-2 rounded-xl text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed ${
+                                    action.targetStatus === "CANCELLED"
+                                      ? "bg-white border border-red-200 text-red-600 hover:bg-red-50"
+                                      : "bg-green-600 text-white hover:bg-green-700"
+                                  }`}
+                                >
+                                  {isUpdating && updating[order.id] === action.targetStatus
+                                    ? "Updating…"
+                                    : action.label}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })()}
                     </div>
                   )}
                 </Card>
